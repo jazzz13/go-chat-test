@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<style>
+		iframe {
+			margin: 20px;
+			width: 350px;
+			height: 350px;
+			display: inline-block;
+		}
+	</style>
+	<script>
+		const newDialog = () => {
+
+			const children = document.body.children
+			const iframe = document.createElement('iframe')
+			iframe.src = "/chat.html"
+			document.body.insertBefore(iframe, children[children.length-1])
+		}
+
+		window.onload = () => {
+			newDialog()
+			newDialog()
+			newDialog()
+		}
+	</script>
+</head>
+<body>
+	<button onClick="newDialog()">New dialog</button>
+</body>
+</html>

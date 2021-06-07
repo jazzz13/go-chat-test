@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+	<style>
+		#messages_container {
+			height: 250px;
+			overflow: scroll;
+		}
+	</style>
+    <script type="text/javascript">
+
+        let socket = new WebSocket("ws://localhost:3000/ws");
+
+		socket.onopen = function() {
+			socket.send(JSON.stringify({action: "get_history"}))
+		};
+
+        socket.onmessage = function (event) {
+			const container = document.getElementById("messages_container")
+			let data = JSON.parse(event.data)
+			container.innerHTML = container.innerHTML + "<br/>" + data.join("<br/>")
+			container.scrollTop = container.scrollHeight;
+        }
+
+        const sendMessage = () => {
+
+            const input = document.getElementById("message_input")
+            const msg = input.value.trim()
+            input.value = ""
+
+            if (msg.length) socket.send(JSON.stringify({action: "post_message", message: msg}))
+        }
+
+		const updateName = () => {
+
+			const input = document.getElementById("name_input")
+			const value = input.value.trim()
+
+			socket.send(JSON.stringify({action: "update_name", name: value}))
+		}
+
+        const closeSession = () => {
+            socket.close()
+			document.body.innerHTML = "You disconnected"
+        }
+    </script>
+</head>
+	<body>
+		<input type="text" value="Unnamed" id="name_input"/>
+		<button onClick="updateName()">Rename</button>
+		<button onClick="closeSession()">Close</button>
+		<div
+			id="messages_container"
+			style="border: 1px solid silver; padding: 5px; margin: 10px 0;"
+		>
+			Start of conversation
+		</div>
+		<input type="text" value="" placeholder="Type message" id="message_input"/>
+		<button onClick="sendMessage()">Send message</button>
+	</body>
+</html>
